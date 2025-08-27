@@ -1,0 +1,404 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>The New DoD Compliance Mandate: An Infographic</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <!-- Chosen Palette: Energetic & Playful -->
+    <!-- 
+    Narrative & Structure Plan:
+    This infographic tells a linear story designed for a busy executive in the Defense Industrial Base.
+    1.  Hook: A high-impact title and four key takeaways ("The Four Truths") to immediately convey the urgency and strategic importance.
+    2.  The Paradigm Shift: Visually contrasts the old (8570) and new (8140) frameworks to establish the foundational change.
+    3.  The Contractor Mandate: Uses a powerful bar chart to highlight the stricter standards for contractors, the most critical risk factor.
+    4.  The 2025 Convergence: A timeline visualizes the "perfect storm" of converging deadlines for both 8140 and CMMC.
+    5.  Synergy Explained: A flow diagram shows the functional link between 8140-qualified personnel and CMMC success.
+    6.  Competitive Advantage: A donut chart illustrates how compliance can be "weaponized" from a cost center into a value proposition.
+    7.  Conclusion/Roadmap: Ends with a clear, actionable 3-step roadmap.
+    This structure moves from high-level awareness to specific risks, functional relationships, and finally, strategic action.
+    -->
+    <!--
+    Visualization & Content Choices:
+    -   Four Truths (KPIs): Goal: Inform. Method: Styled HTML cards with large fonts and icons. Justification: Delivers the most critical, high-level findings immediately. (NO SVG)
+    -   8570 vs 8140: Goal: Compare. Method: A two-column styled HTML layout. Justification: Best for comparing qualitative concepts (philosophy, structure) side-by-side. (NO SVG)
+    -   Gov't vs. Contractor Standards: Goal: Compare. Method: Chart.js Horizontal Bar Chart. Justification: The most effective way to visually dramatize the disparity in grace periods and waivers, making the data instantly understandable. (Chart.js/Canvas, NO SVG)
+    -   2025 Timeline: Goal: Show Change. Method: A horizontal timeline built with structured HTML/CSS. Justification: Clearly shows the sequence and convergence of key dates, creating a sense of urgency. (NO SVG)
+    -   8140 to CMMC Flow: Goal: Show Relationships. Method: A flowchart built with structured HTML/CSS. Justification: Visually demonstrates how specific 8140 work roles are the functional enablers of CMMC compliance domains. (NO SVG, NO Mermaid JS)
+    -   Weaponizing Compliance: Goal: Inform. Method: Chart.js Donut Chart. Justification: Simple, effective visual metaphor for transforming a "cost" into a "value-add" and competitive advantage. (Chart.js/Canvas, NO SVG)
+    -   CONFIRMATION: NO SVG graphics used. NO Mermaid JS used.
+    -->
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f0f2f5;
+        }
+        .kpi-card {
+            background-color: white;
+            border-radius: 0.75rem;
+            padding: 1.5rem;
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.05), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+            border: 1px solid #e5e7eb;
+        }
+        .chart-container {
+            position: relative;
+            width: 100%;
+            max-width: 800px;
+            margin-left: auto;
+            margin-right: auto;
+            height: 300px;
+            max-height: 350px;
+        }
+        @media (min-width: 768px) {
+            .chart-container {
+                height: 350px;
+            }
+        }
+        .flow-line {
+            width: 2px;
+            background-color: #6c63ff;
+            position: absolute;
+            left: 50%;
+            transform: translateX(-50%);
+        }
+        .flow-item {
+            position: relative;
+            padding-left: 2.5rem;
+        }
+        .flow-item::before {
+            content: '';
+            position: absolute;
+            left: -0.5rem;
+            top: 0.25rem;
+            width: 1.25rem;
+            height: 1.25rem;
+            border-radius: 9999px;
+            background-color: white;
+            border: 3px solid #6c63ff;
+        }
+    </style>
+</head>
+<body class="text-gray-800">
+
+    <div class="container mx-auto p-4 md:p-8 max-w-7xl">
+
+        <header class="text-center my-12">
+            <h1 class="text-4xl md:text-6xl font-extrabold" style="color: #6c63ff;">The New Compliance Mandate</h1>
+            <p class="mt-4 text-lg md:text-xl text-gray-600 max-w-4xl mx-auto">A strategic infographic for the Defense Industrial Base on navigating the convergence of <span class="font-bold">DoD 8140</span> and <span class="font-bold">CMMC</span>.</p>
+        </header>
+
+        <section class="my-16">
+            <h2 class="text-3xl font-bold text-center mb-10">The Four Truths of the New Landscape</h2>
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+                <div class="kpi-card text-center">
+                    <div class="text-5xl mb-2" style="color: #ff6361;">&#9888;</div>
+                    <h3 class="text-xl font-bold" style="color: #003f5c;">The Contractor Paradox</h3>
+                    <p class="mt-2 text-gray-600">8140 is already being enforced in new contracts, despite the final DFARS rule pending for 2025. Waiting is not a viable strategy.</p>
+                </div>
+                <div class="kpi-card text-center">
+                    <div class="text-5xl mb-2" style="color: #ff6361;">&#128197;</div>
+                    <h3 class="text-xl font-bold" style="color: #003f5c;">The 2025 Convergence</h3>
+                    <p class="mt-2 text-gray-600">DoD 8140 and CMMC deadlines are converging, creating a "perfect storm" for talent, resources, and budgets.</p>
+                </div>
+                <div class="kpi-card text-center">
+                    <div class="text-5xl mb-2" style="color: #ff6361;">&#127942;</div>
+                    <h3 class="text-xl font-bold" style="color: #003f5c;">The Stricter Standard</h3>
+                    <p class="mt-2 text-gray-600">Contractors face a "Day One" qualification mandate with no grace periods, waivers, or experience pathways.</p>
+                </div>
+                <div class="kpi-card text-center">
+                    <div class="text-5xl mb-2" style="color: #ff6361;">&#128640;</div>
+                    <h3 class="text-xl font-bold" style="color: #003f5c;">The Compliance Weapon</h3>
+                    <p class="mt-2 text-gray-600">Advanced proficiency levels are now a competitive differentiator to justify higher prices in "Best Value" bids.</p>
+                </div>
+            </div>
+        </section>
+
+        <section class="my-20 bg-white rounded-lg p-8 shadow-md">
+            <h2 class="text-3xl font-bold text-center mb-10">The Paradigm Shift: From Compliance to Capability</h2>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-8 items-center">
+                <div class="p-6 border-2 border-dashed border-gray-300 rounded-lg">
+                    <h3 class="text-2xl font-bold text-center text-gray-500">DoD 8570 (Legacy)</h3>
+                    <ul class="mt-4 space-y-3 text-lg text-gray-600">
+                        <li><span class="font-bold">Philosophy:</span> Compliance-Centric</li>
+                        <li><span class="font-bold">Focus:</span> "Do you have the right certificate?"</li>
+                        <li><span class="font-bold">Structure:</span> Rigid, function-based (IAT/IAM)</li>
+                        <li><span class="font-bold">Result:</span> A "pass/fail" compliance hurdle</li>
+                    </ul>
+                </div>
+                <div class="p-6 rounded-lg" style="background-color: #6c63ff;">
+                    <h3 class="text-2xl font-bold text-center text-white">DoD 8140 (Current)</h3>
+                     <ul class="mt-4 space-y-3 text-lg text-white">
+                        <li><span class="font-bold">Philosophy:</span> Capability-Based</li>
+                        <li><span class="font-bold">Focus:</span> "Can you do the job?"</li>
+                        <li><span class="font-bold">Structure:</span> Flexible, role-based (54 DCWF Roles)</li>
+                        <li><span class="font-bold">Result:</span> A competitive technical discriminator</li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+
+        <section class="my-20">
+            <h2 class="text-3xl font-bold text-center mb-4">The Contractor Mandate: A Stricter Standard</h2>
+            <p class="text-center text-gray-600 max-w-3xl mx-auto mb-10">The DoD 8140 framework establishes a two-tier system. This chart visualizes the stark contrast in compliance flexibility, showing that contractors are held to a much higher, non-negotiable standard from day one.</p>
+            <div class="bg-white rounded-lg p-8 shadow-md">
+                <div class="chart-container">
+                    <canvas id="complianceStandardChart"></canvas>
+                </div>
+            </div>
+        </section>
+        
+        <section class="my-20">
+            <h2 class="text-3xl font-bold text-center mb-10">The 2025 Convergence: A Perfect Storm</h2>
+            <p class="text-center text-gray-600 max-w-3xl mx-auto mb-10">Contractors must prepare for two massive, parallel compliance efforts peaking in 2025. This timeline highlights the key deadlines that will strain DIB resources and intensify competition for talent.</p>
+            <div class="w-full bg-white rounded-lg p-8 shadow-md">
+                <div class="relative wrap overflow-hidden p-10 h-full">
+                    <div class="border-2-2 absolute border-opacity-20 border-gray-700 h-full border" style="left: 50%"></div>
+                    <div class="mb-8 flex justify-between items-center w-full right-timeline">
+                        <div class="order-1 w-5/12"></div>
+                        <div class="z-20 flex items-center order-1 bg-gray-800 shadow-xl w-8 h-8 rounded-full">
+                            <h1 class="mx-auto font-semibold text-lg text-white">1</h1>
+                        </div>
+                        <div class="order-1 bg-blue-100 rounded-lg shadow-xl w-5/12 px-6 py-4">
+                            <h3 class="mb-3 font-bold text-gray-800 text-xl">Dec 2024</h3>
+                            <p class="text-sm leading-snug tracking-wide text-gray-900 text-opacity-100">CMMC Final Rule (32 CFR) becomes effective, formally establishing the program.</p>
+                        </div>
+                    </div>
+                    <div class="mb-8 flex justify-between flex-row-reverse items-center w-full left-timeline">
+                        <div class="order-1 w-5/12"></div>
+                        <div class="z-20 flex items-center order-1 bg-gray-800 shadow-xl w-8 h-8 rounded-full">
+                            <h1 class="mx-auto text-white font-semibold text-lg">2</h1>
+                        </div>
+                        <div class="order-1 bg-red-100 rounded-lg shadow-xl w-5/12 px-6 py-4">
+                            <h3 class="mb-3 font-bold text-gray-800 text-xl">Feb 2025</h3>
+                            <p class="text-sm leading-snug tracking-wide text-gray-900 text-opacity-100">DoD 8140 deadline for Cybersecurity workforce element. This becomes the "Day One" standard for contractors.</p>
+                        </div>
+                    </div>
+                    <div class="mb-8 flex justify-between items-center w-full right-timeline">
+                        <div class="order-1 w-5/12"></div>
+                        <div class="z-20 flex items-center order-1 bg-gray-800 shadow-xl w-8 h-8 rounded-full">
+                            <h1 class="mx-auto font-semibold text-lg text-white">3</h1>
+                        </div>
+                        <div class="order-1 bg-blue-100 rounded-lg shadow-xl w-5/12 px-6 py-4">
+                            <h3 class="mb-3 font-bold text-gray-800 text-xl">Mid-Late 2025</h3>
+                            <p class="text-sm leading-snug tracking-wide text-gray-900 text-opacity-100">CMMC DFARS Rule (48 CFR) finalized. CMMC clauses begin appearing in all new DoD contracts.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="my-20">
+            <h2 class="text-3xl font-bold text-center mb-4">Synergy Explained: People Power the Process</h2>
+            <p class="text-center text-gray-600 max-w-3xl mx-auto mb-10">DoD 8140 and CMMC are not separate challenges; they are symbiotic. An 8140-qualified workforce is the essential human element required to achieve and maintain organizational CMMC certification.</p>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-8 p-8 bg-white rounded-lg shadow-md">
+                <div class="text-center">
+                    <h3 class="text-2xl font-bold mb-4" style="color: #ff6361;">DoD 8140: The People</h3>
+                    <p class="mb-6">Ensures individuals have the validated skills for their specific cyber work role.</p>
+                    <div class="space-y-4 text-left">
+                        <div class="p-4 rounded-lg border-2" style="border-color: #ff6361;">
+                            <p class="font-bold">Work Role 722: ISSM</p>
+                            <p class="text-sm text-gray-600">Develops the System Security Plan (SSP) and manages the POA&M.</p>
+                        </div>
+                        <div class="p-4 rounded-lg border-2" style="border-color: #ff6361;">
+                            <p class="font-bold">Work Role 511: Cyber Defense Analyst</p>
+                            <p class="text-sm text-gray-600">Performs continuous monitoring and incident response.</p>
+                        </div>
+                        <div class="p-4 rounded-lg border-2" style="border-color: #ff6361;">
+                            <p class="font-bold">Work Role 451: System Administrator</p>
+                            <p class="text-sm text-gray-600">Implements technical controls like access control and system configuration.</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="text-center">
+                    <h3 class="text-2xl font-bold mb-4" style="color: #6c63ff;">CMMC: The Organization</h3>
+                    <p class="mb-6">Verifies the organization has implemented the required security controls.</p>
+                    <div class="space-y-4 text-left">
+                        <div class="p-4 rounded-lg border-2" style="border-color: #6c63ff;">
+                            <p class="font-bold">CMMC Domain: System & Info Integrity</p>
+                            <p class="text-sm text-gray-600">Requires a robust SSP and POA&M, managed by the ISSM.</p>
+                        </div>
+                        <div class="p-4 rounded-lg border-2" style="border-color: #6c63ff;">
+                            <p class="font-bold">CMMC Domain: Audit & Accountability</p>
+                            <p class="text-sm text-gray-600">Requires log analysis and monitoring, performed by the Analyst.</p>
+                        </div>
+                        <div class="p-4 rounded-lg border-2" style="border-color: #6c63ff;">
+                            <p class="font-bold">CMMC Domain: Access Control</p>
+                            <p class="text-sm text-gray-600">Requires proper user permissions, implemented by the Sys Admin.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="my-20">
+            <h2 class="text-3xl font-bold text-center mb-4">From Cost Center to Competitive Weapon</h2>
+            <p class="text-center text-gray-600 max-w-3xl mx-auto mb-10">Under DoD 8140, investing in higher proficiency levels is no longer just an overhead cost. It's a strategic tool to build a superior technical solution, reduce government risk, and justify a premium price in best-value bids.</p>
+             <div class="bg-white rounded-lg p-8 shadow-md">
+                <div class="chart-container" style="max-width: 400px; height: 400px;">
+                    <canvas id="valueChart"></canvas>
+                </div>
+            </div>
+        </section>
+
+        <section class="my-20">
+            <div class="p-8 md:p-12 rounded-lg" style="background-color: #003f5c;">
+                <h2 class="text-3xl font-bold text-center text-white mb-8">Your 3-Step Strategic Roadmap</h2>
+                <div class="relative">
+                    <div class="flow-line top-4 bottom-4"></div>
+                    <div class="flow-item mb-8">
+                        <h3 class="text-xl font-bold text-white">1. ASSESS (0-90 Days)</h3>
+                        <p class="text-gray-300">Conduct an urgent workforce baseline assessment. Map every employee to a DCWF work role and perform a gap analysis against the 8140 qualification matrix.</p>
+                    </div>
+                    <div class="flow-item mb-8">
+                        <h3 class="text-xl font-bold text-white">2. PLAN (3-12 Months)</h3>
+                        <p class="text-gray-300">Develop a strategic, budgeted qualification plan to close gaps. Re-engineer proposal processes to use DCWF language and integrate the framework into your talent management lifecycle.</p>
+                    </div>
+                    <div class="flow-item">
+                        <h3 class="text-xl font-bold text-white">3. DIFFERENTIATE (12+ Months)</h3>
+                        <p class="text-gray-300">Invest in "Advanced" level qualifications for key roles. Market this superior capability as a key discriminator that reduces government risk to win more "Best Value" contracts.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+    </div>
+
+<script>
+    const wrapLabel = (label) => {
+        const maxLength = 16;
+        if (label.length <= maxLength) {
+            return label;
+        }
+        const words = label.split(' ');
+        const lines = [];
+        let currentLine = '';
+        words.forEach(word => {
+            if ((currentLine + ' ' + word).trim().length > maxLength) {
+                lines.push(currentLine.trim());
+                currentLine = word;
+            } else {
+                currentLine = (currentLine + ' ' + word).trim();
+            }
+        });
+        if (currentLine) {
+            lines.push(currentLine.trim());
+        }
+        return lines;
+    };
+
+    const tooltipTitleCallback = (tooltipItems) => {
+        const item = tooltipItems[0];
+        let label = item.chart.data.labels[item.dataIndex];
+        if (Array.isArray(label)) {
+            return label.join(' ');
+        }
+        return label;
+    };
+
+    const complianceLabels = [
+        'Qualification Grace Period (Months)', 
+        'Qualification Waivers', 
+        'Experience Pathway (EQP)'
+    ].map(wrapLabel);
+
+    const complianceStandardCtx = document.getElementById('complianceStandardChart').getContext('2d');
+    new Chart(complianceStandardCtx, {
+        type: 'bar',
+        data: {
+            labels: complianceLabels,
+            datasets: [{
+                label: 'Government Personnel',
+                data: [9, 1, 1],
+                backgroundColor: 'rgba(99, 102, 241, 0.7)',
+                borderColor: 'rgba(99, 102, 241, 1)',
+                borderWidth: 1
+            }, {
+                label: 'Contractor Personnel',
+                data: [0, 0, 0],
+                backgroundColor: 'rgba(255, 99, 97, 0.7)',
+                borderColor: 'rgba(255, 99, 97, 1)',
+                borderWidth: 1
+            }]
+        },
+        options: {
+            indexAxis: 'y',
+            responsive: true,
+            maintainAspectRatio: false,
+            scales: {
+                x: {
+                    beginAtZero: true,
+                    ticks: {
+                        callback: function(value, index, ticks) {
+                            const label = this.chart.data.labels[index];
+                            if (Array.isArray(label) && label.join(' ').includes('Months')) {
+                                return value;
+                            }
+                            return value > 0 ? 'Available' : 'Not Available';
+                        }
+                    }
+                }
+            },
+            plugins: {
+                tooltip: {
+                    callbacks: {
+                        title: tooltipTitleCallback,
+                        label: function(context) {
+                            let label = context.dataset.label || '';
+                            if (label) {
+                                label += ': ';
+                            }
+                            if (context.parsed.x !== null) {
+                                if (context.label.includes('Months')) {
+                                    label += context.parsed.x + ' Months';
+                                } else {
+                                    label += context.parsed.x > 0 ? 'Available' : 'Not Available';
+                                }
+                            }
+                            return label;
+                        }
+                    }
+                }
+            }
+        }
+    });
+
+    const valueCtx = document.getElementById('valueChart').getContext('2d');
+    new Chart(valueCtx, {
+        type: 'doughnut',
+        data: {
+            labels: ['Compliance Cost (Basic/Intermediate)', 'Competitive Advantage (Advanced)'],
+            datasets: [{
+                label: 'Value Proposition',
+                data: [70, 30],
+                backgroundColor: [
+                    '#ff6361',
+                    '#6c63ff'
+                ],
+                borderColor: [
+                    '#ffffff',
+                    '#ffffff'
+                ],
+                borderWidth: 4
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                legend: {
+                    position: 'bottom',
+                },
+                tooltip: {
+                    callbacks: {
+                        title: tooltipTitleCallback
+                    }
+                }
+            }
+        }
+    });
+</script>
+
+</body>
+</html>
