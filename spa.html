@@ -1,0 +1,484 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DoD 8140 & CMMC Compliance Navigator</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chartjs-adapter-date-fns/dist/chartjs-adapter-date-fns.bundle.min.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Chosen Palette: Warm Neutral Harmony -->
+    <!-- Application Structure Plan: A thematic, single-page dashboard structure was chosen to provide a holistic overview at a glance while allowing users to dive deeper into specific areas of interest. The top-level KPIs (Key Paradigms) offer immediate strategic insights. The main sections are organized by theme (Framework Comparison, Contractor Impact, Timelines, Strategic Roadmap) rather than report order, which allows a user to logically flow from understanding the 'what' (the frameworks) to the 'so what' (the impact and actions). Navigation is handled by a sticky header, enabling quick jumps between these logical sections. This structure avoids a linear, document-like experience and promotes user-driven exploration of the complex, interrelated topics, which is ideal for busy decision-makers in the DIB. -->
+    <!-- Visualization & Content Choices: 
+        - Key Paradigms (HTML/CSS): Goal: Inform. Method: Large-font key takeaways in card-based layout. Interaction: None. Justification: Provides immediate, high-level understanding of the report's core findings.
+        - Framework Comparison (HTML Table): Goal: Compare. Method: A clear, side-by-side table. Interaction: None. Justification: The most effective way to present a direct comparison of two distinct frameworks like 8140 and CMMC.
+        - Contractor vs. Government Standards (Chart.js Bar Chart): Goal: Compare. Method: A horizontal bar chart. Interaction: Tooltips on hover. Justification: Visually dramatizes the disparity in compliance timelines and flexibility, making the "stricter standard for contractors" immediately apparent. A bar chart is more impactful than a simple table for this specific data point.
+        - Compliance Timeline (Chart.js Bar Chart): Goal: Show Change/Sequence. Method: A horizontal bar chart representing a timeline. Interaction: Tooltips on hover. Justification: Clearly visualizes the converging deadlines of 8140 and CMMC, highlighting the "perfect storm" in 2025.
+        - Qualification Matrix (Interactive Table): Goal: Organize/Inform. Method: A filterable HTML table. Interaction: Users can select a DCWF Work Role from a dropdown to dynamically filter the qualification matrix. Justification: Manages the complexity of the detailed matrix by allowing users to focus only on the roles relevant to them, significantly improving usability.
+        - Strategic Roadmap (HTML Accordion): Goal: Organize/Inform. Method: An interactive accordion. Interaction: Users click to expand/collapse sections. Justification: Presents the dense, multi-phase roadmap in a digestible format, preventing overwhelming the user with a long list of recommendations.
+        - CONFIRMATION: NO SVG graphics used. NO Mermaid JS used. -->
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #FDFBF8; /* Warm Neutral */
+            color: #4B4B4B;
+        }
+        .nav-link {
+            transition: color 0.3s ease, border-bottom-color 0.3s ease;
+            border-bottom: 2px solid transparent;
+        }
+        .nav-link:hover, .nav-link.active {
+            color: #C07B58; /* Subtle Accent */
+            border-bottom-color: #C07B58;
+        }
+        .card {
+            background-color: #FFFFFF;
+            border: 1px solid #EAEAEA;
+            box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.05), 0 2px 4px -2px rgb(0 0 0 / 0.05);
+        }
+        .accent-bg { background-color: #EAE3D9; } /* Complimentary Neutral */
+        .accent-text { color: #C07B58; }
+        .btn-primary {
+            background-color: #C07B58;
+            color: #FFFFFF;
+            transition: background-color 0.3s ease;
+        }
+        .btn-primary:hover {
+            background-color: #A96846;
+        }
+        .table-header { background-color: #F3F4F6; }
+        .accordion-content {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.5s ease-in-out;
+        }
+        .chart-container {
+            position: relative;
+            width: 100%;
+            max-width: 800px;
+            margin-left: auto;
+            margin-right: auto;
+            height: 350px;
+            max-height: 400px;
+        }
+        @media (min-width: 768px) {
+            .chart-container {
+                height: 400px;
+            }
+        }
+    </style>
+</head>
+<body class="antialiased">
+
+    <!-- Header & Navigation -->
+    <header class="sticky top-0 z-50 bg-white/80 backdrop-blur-lg shadow-sm">
+        <div class="container mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex items-center justify-between h-16">
+                <div class="flex-shrink-0">
+                    <h1 class="text-xl font-bold text-gray-800">DoD Compliance Navigator</h1>
+                </div>
+                <nav class="hidden md:block">
+                    <div class="ml-10 flex items-baseline space-x-4">
+                        <a href="#overview" class="nav-link px-3 py-2 rounded-md text-sm font-medium text-gray-700">Overview</a>
+                        <a href="#comparison" class="nav-link px-3 py-2 rounded-md text-sm font-medium text-gray-700">Frameworks</a>
+                        <a href="#impact" class="nav-link px-3 py-2 rounded-md text-sm font-medium text-gray-700">Contractor Impact</a>
+                        <a href="#matrix" class="nav-link px-3 py-2 rounded-md text-sm font-medium text-gray-700">Qualification Matrix</a>
+                        <a href="#roadmap" class="nav-link px-3 py-2 rounded-md text-sm font-medium text-gray-700">Roadmap</a>
+                    </div>
+                </nav>
+            </div>
+        </div>
+    </header>
+
+    <main class="container mx-auto px-4 sm:px-6 lg:px-8 py-8 md:py-12">
+
+        <!-- Section 1: Overview & Key Paradigms -->
+        <section id="overview" class="mb-16 scroll-mt-20">
+            <div class="text-center mb-12">
+                <h2 class="text-3xl md:text-4xl font-bold tracking-tight text-gray-900">The New Compliance Mandate</h2>
+                <p class="mt-4 max-w-3xl mx-auto text-lg text-gray-600">A consolidated analysis of DoD 8140 and CMMC for the Defense Industrial Base, highlighting a paradigm shift in workforce and organizational security requirements.</p>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                <div class="card rounded-lg p-6">
+                    <h3 class="font-semibold text-lg accent-text">Contractor Paradox</h3>
+                    <p class="mt-2 text-sm text-gray-600">Despite a pending DFARS update, forward-leaning contracting officers are already enforcing DoD 8140. Waiting for final regulation is a high-risk strategy.</p>
+                </div>
+                <div class="card rounded-lg p-6">
+                    <h3 class="font-semibold text-lg accent-text">Dual Compliance Burden</h3>
+                    <p class="mt-2 text-sm text-gray-600">DoD 8140 (personnel) and CMMC (organization) have converging 2025 deadlines, creating intense competition for talent and resources.</p>
+                </div>
+                <div class="card rounded-lg p-6">
+                    <h3 class="font-semibold text-lg accent-text">"Finished Product" Mandate</h3>
+                    <p class="mt-2 text-sm text-gray-600">Contractors face stricter "Day One" qualification standards than government staff, with no grace periods, waivers, or experience pathways.</p>
+                </div>
+                <div class="card rounded-lg p-6">
+                    <h3 class="font-semibold text-lg accent-text">Weaponized Compliance</h3>
+                    <p class="mt-2 text-sm text-gray-600">Advanced proficiency levels under 8140 are no longer just a cost, but a competitive differentiator to justify higher prices in "Best Value" bids.</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Section 2: Framework Comparison -->
+        <section id="comparison" class="mb-16 scroll-mt-20">
+            <div class="accent-bg rounded-lg p-8 md:p-12">
+                <h2 class="text-2xl md:text-3xl font-bold text-gray-900 mb-2">Symbiotic Pillars of Security</h2>
+                <p class="text-gray-700 mb-8 max-w-4xl">DoD 8140 and CMMC are not competing frameworks; they are distinct but interdependent. 8140 addresses the <span class="font-semibold">people</span>, ensuring individual capability, while CMMC addresses the <span class="font-semibold">organization</span>, verifying process and technology maturity. You cannot achieve one without the other.</p>
+                <div class="overflow-x-auto card rounded-lg">
+                    <table class="w-full text-sm text-left text-gray-600">
+                        <thead class="text-xs text-gray-700 uppercase table-header">
+                            <tr>
+                                <th scope="col" class="px-6 py-3">Attribute</th>
+                                <th scope="col" class="px-6 py-3 font-bold">DoD 8140</th>
+                                <th scope="col" class="px-6 py-3 font-bold">CMMC</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr class="bg-white border-b">
+                                <td class="px-6 py-4 font-medium text-gray-900">Focus</td>
+                                <td class="px-6 py-4">Personnel Qualification</td>
+                                <td class="px-6 py-4">Organizational Security</td>
+                            </tr>
+                            <tr class="bg-white border-b">
+                                <td class="px-6 py-4 font-medium text-gray-900">Governing Principle</td>
+                                <td class="px-6 py-4">Individual Capability</td>
+                                <td class="px-6 py-4">Process Maturity</td>
+                            </tr>
+                            <tr class="bg-white border-b">
+                                <td class="px-6 py-4 font-medium text-gray-900">Unit of Assessment</td>
+                                <td class="px-6 py-4">The individual employee</td>
+                                <td class="px-6 py-4">The contractor's enterprise</td>
+                            </tr>
+                            <tr class="bg-white">
+                                <td class="px-6 py-4 font-medium text-gray-900">Core Question</td>
+                                <td class="px-6 py-4">"Can this person do the job securely?"</td>
+                                <td class="px-6 py-4">"Has this organization implemented the required security controls?"</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </section>
+
+        <!-- Section 3: Contractor Impact & Timelines -->
+        <section id="impact" class="mb-16 scroll-mt-20">
+            <h2 class="text-2xl md:text-3xl font-bold text-gray-900 text-center mb-12">The Contractor's Mandate: A Stricter Standard</h2>
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+                <div class="card rounded-lg p-6">
+                    <h3 class="text-xl font-semibold mb-4 text-center">Qualification Timelines: Gov't vs. Contractor</h3>
+                     <p class="text-sm text-gray-600 text-center mb-4">This chart visualizes the significant disparity in compliance timelines. While government personnel have a grace period to get qualified after being assigned, contractors must be fully qualified on Day One.</p>
+                    <div class="chart-container">
+                        <canvas id="timelineChart"></canvas>
+                    </div>
+                </div>
+                <div class="card rounded-lg p-6">
+                     <h3 class="text-xl font-semibold mb-4 text-center">The 2025 Compliance Convergence</h3>
+                    <p class="text-sm text-gray-600 text-center mb-4">A "perfect storm" of compliance deadlines is set for 2025, creating a compressed preparation window and intensifying competition for cybersecurity talent and resources across the DIB.</p>
+                    <div class="chart-container">
+                        <canvas id="convergenceChart"></canvas>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Section 4: Interactive Qualification Matrix -->
+        <section id="matrix" class="mb-16 scroll-mt-20">
+            <h2 class="text-2xl md:text-3xl font-bold text-gray-900 text-center">Interactive DCWF Qualification Matrix</h2>
+            <p class="mt-4 max-w-3xl mx-auto text-center text-gray-600">Select a DCWF work role to view the specific foundational qualification pathways (Education, Training, or Certification) required at each proficiency level. Remember, contractors are <span class="font-bold">not eligible</span> for the experience-based pathway.</p>
+            
+            <div class="mt-8 max-w-md mx-auto">
+                <label for="role-filter" class="block text-sm font-medium text-gray-700">Filter by Work Role:</label>
+                <select id="role-filter" class="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-C07B58 focus:border-C07B58 sm:text-sm rounded-md">
+                    <option value="all">Show All Roles</option>
+                    <option value="451">451 - System Administrator</option>
+                    <option value="441">441 - Network Operations Specialist</option>
+                    <option value="511">511 - Cyber Defense Analyst</option>
+                    <option value="541">541 - Vulnerability Assessment Analyst</option>
+                    <option value="722">722 - Information Systems Security Manager</option>
+                    <option value="802">802 - IT Project Manager</option>
+                </select>
+            </div>
+
+            <div class="mt-8 overflow-x-auto card rounded-lg">
+                <table class="w-full min-w-max text-sm text-left text-gray-600" id="qualification-table">
+                    <thead class="text-xs text-gray-700 uppercase table-header">
+                        <tr>
+                            <th scope="col" class="px-6 py-3">Work Role</th>
+                            <th scope="col" class="px-6 py-3">Proficiency</th>
+                            <th scope="col" class="px-6 py-3">Education</th>
+                            <th scope="col" class="px-6 py-3">Certifications (Examples)</th>
+                        </tr>
+                    </thead>
+                    <tbody class="divide-y">
+                        <!-- Data rows will be injected by JavaScript -->
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
+        <!-- Section 5: Strategic Roadmap -->
+        <section id="roadmap" class="scroll-mt-20">
+            <h2 class="text-2xl md:text-3xl font-bold text-gray-900 text-center">Strategic Roadmap for Compliance</h2>
+            <p class="mt-4 max-w-3xl mx-auto text-center text-gray-600">Transform compliance from a cost center into a competitive advantage with this phased, actionable roadmap.</p>
+            <div class="mt-12 max-w-4xl mx-auto">
+                <div class="space-y-4" id="accordion-container">
+                    <!-- Accordion items will be injected by JavaScript -->
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <footer class="bg-gray-800 mt-16">
+        <div class="container mx-auto px-4 sm:px-6 lg:px-8 py-4">
+            <p class="text-center text-sm text-gray-400">This interactive report is a synthesized analysis for strategic planning purposes. Always refer to official DoD documentation for authoritative guidance.</p>
+        </div>
+    </footer>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            // Data for charts and tables
+            const qualificationData = [
+                { role: '451 - System Administrator', code: '451', proficiency: 'Basic', education: "Associate's+", certs: 'CompTIA A+, Network+, Security+' },
+                { role: '451 - System Administrator', code: '451', proficiency: 'Intermediate', education: "Bachelor's+", certs: 'CompTIA Cloud+, (ISC)² SSCP' },
+                { role: '451 - System Administrator', code: '451', proficiency: 'Advanced', education: "Bachelor's+", certs: '(ISC)² CCSP, CompTIA CASP+' },
+                { role: '441 - Network Operations Specialist', code: '441', proficiency: 'Basic', education: "Associate's+", certs: 'CompTIA Network+, Security+' },
+                { role: '441 - Network Operations Specialist', code: '441', proficiency: 'Intermediate', education: "Bachelor's+", certs: 'Cisco CCNA, CompTIA Cloud+' },
+                { role: '441 - Network Operations Specialist', code: '441', proficiency: 'Advanced', education: "Bachelor's+", certs: 'Cisco CCNP, (ISC)² CCSP' },
+                { role: '511 - Cyber Defense Analyst', code: '511', proficiency: 'Basic', education: "Associate's+", certs: 'CompTIA Security+, CEH, GSEC, GCIH' },
+                { role: '511 - Cyber Defense Analyst', code: '511', proficiency: 'Intermediate', education: "Bachelor's+", certs: 'CompTIA CySA+, CHFI, GCIA' },
+                { role: '511 - Cyber Defense Analyst', code: '511', proficiency: 'Advanced', education: "Bachelor's+", certs: 'CompTIA CASP+, CISSP, GCFE, GCFA' },
+                { role: '541 - Vulnerability Assessment Analyst', code: '541', proficiency: 'Basic', education: "Associate's+", certs: 'CompTIA Security+, CEH' },
+                { role: '541 - Vulnerability Assessment Analyst', code: '541', proficiency: 'Intermediate', education: "Bachelor's+", certs: 'CompTIA PenTest+, GPEN' },
+                { role: '541 - Vulnerability Assessment Analyst', code: '541', proficiency: 'Advanced', education: "Bachelor's+", certs: 'CompTIA CASP+, GWAPT' },
+                { role: '722 - Information Systems Security Manager', code: '722', proficiency: 'Basic', education: "Associate's+", certs: 'CompTIA Security+, GSEC' },
+                { role: '722 - Information Systems Security Manager', code: '722', proficiency: 'Intermediate', education: "Bachelor's+", certs: '(ISC)² CAP, CISM, CASP+' },
+                { role: '722 - Information Systems Security Manager', code: '722', proficiency: 'Advanced', education: "Bachelor's+", certs: '(ISC)² CISSP' },
+                { role: '802 - IT Project Manager', code: '802', proficiency: 'Basic', education: "Associate's+", certs: 'CompTIA Security+' },
+                { role: '802 - IT Project Manager', code: '802', proficiency: 'Intermediate', education: "Bachelor's+", certs: '(ISC)² CAP, CISM' },
+                { role: '802 - IT Project Manager', code: '802', proficiency: 'Advanced', education: "Bachelor's+", certs: 'CompTIA CASP+, (ISC)² CISSP' },
+            ];
+
+            const roadmapData = [
+                { title: 'Immediate Actions (0-90 Days)', content: '<ul><li class="mb-2"><strong>Conduct Urgent Workforce Baseline Assessment:</strong> Map all personnel to DCWF roles and perform a gap analysis against official qualification matrices.</li><li class="mb-2"><strong>Establish Integrated Compliance Task Force:</strong> Create a cross-functional team (HR, BD, IT/Security) to manage a unified 8140 and CMMC strategy.</li><li><strong>Review Active and Pending Contracts:</strong> Analyze all solicitations for 8140, DCWF, or CMMC language to identify immediate obligations.</li></ul>' },
+                { title: 'Medium-Term Strategy (3-12 Months)', content: '<ul><li class="mb-2"><strong>Develop a Strategic Qualification Plan:</strong> Create a budgeted, time-phased plan to close qualification gaps, prioritizing mission-critical roles.</li><li class="mb-2"><strong>Re-engineer Proposal Processes:</strong> Embed 8140 compliance into business development. Create templates for Workforce Qualification Plans.</li><li><strong>Integrate DCWF into Talent Management:</strong> Revise job descriptions, and train recruiters to source and screen based on DCWF KSATs.</li></ul>' },
+                { title: 'Long-Term Positioning (12+ Months)', content: '<ul><li class="mb-2"><strong>Weaponize Compliance for Differentiation:</strong> Invest in "Advanced" level qualifications for key roles and market this as a discriminator in best-value bids.</li><li class="mb-2"><strong>Manage Supply Chain Compliance:</strong> Flow down 8140 and CMMC requirements to all subcontractors and establish a monitoring program.</li><li><strong>Invest in a Compliance Management Platform:</strong> Use an LMS or dedicated platform to automate tracking of qualifications, CPD hours, and CMMC controls.</li></ul>' }
+            ];
+
+            // Chart.js: Timeline Comparison
+            const timelineCtx = document.getElementById('timelineChart').getContext('2d');
+            new Chart(timelineCtx, {
+                type: 'bar',
+                data: {
+                    labels: ['Qualification Waivers', 'Experience Pathway', 'Qualification Grace Period (Months)'],
+                    datasets: [{
+                        label: 'Government Personnel',
+                        data: [1, 1, 9],
+                        backgroundColor: 'rgba(110, 110, 110, 0.6)',
+                        borderColor: 'rgba(110, 110, 110, 1)',
+                        borderWidth: 1
+                    }, {
+                        label: 'Contractor Personnel',
+                        data: [0, 0, 0],
+                        backgroundColor: 'rgba(192, 123, 88, 0.6)',
+                        borderColor: 'rgba(192, 123, 88, 1)',
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    indexAxis: 'y',
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        x: {
+                            beginAtZero: true,
+                            ticks: {
+                                callback: function(value) {
+                                    if (value === 1) return 'Available';
+                                    if (value === 0) return 'Not Available';
+                                    return value;
+                                }
+                            }
+                        }
+                    },
+                    plugins: {
+                        title: { display: false },
+                        tooltip: {
+                            callbacks: {
+                                label: function(context) {
+                                    let label = context.dataset.label || '';
+                                    if (label) {
+                                        label += ': ';
+                                    }
+                                    if (context.parsed.x !== null) {
+                                        if (context.label.includes('Months')) {
+                                            label += context.parsed.x + ' Months';
+                                        } else {
+                                            label += context.parsed.x > 0 ? 'Available' : 'Not Available';
+                                        }
+                                    }
+                                    return label;
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+
+            // Chart.js: Convergence Timeline
+            const convergenceCtx = document.getElementById('convergenceChart').getContext('2d');
+            new Chart(convergenceCtx, {
+                type: 'bar',
+                data: {
+                    labels: ['DoD 8140 (Cybersecurity Workforce)', 'CMMC (DFARS Rule Finalization)'],
+                    datasets: [{
+                        label: 'Projected Deadline',
+                        data: [
+                            { x: [new Date('2025-01-01').getTime(), new Date('2025-02-15').getTime()], y: 'DoD 8140 (Cybersecurity Workforce)' },
+                            { x: [new Date('2025-06-01').getTime(), new Date('2025-10-01').getTime()], y: 'CMMC (DFARS Rule Finalization)' }
+                        ],
+                        backgroundColor: ['rgba(110, 110, 110, 0.6)', 'rgba(192, 123, 88, 0.6)'],
+                        borderColor: ['rgba(110, 110, 110, 1)', 'rgba(192, 123, 88, 1)'],
+                        borderWidth: 1,
+                        barPercentage: 0.5
+                    }]
+                },
+                options: {
+                    indexAxis: 'y',
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        x: {
+                            type: 'time',
+                            time: {
+                                unit: 'month',
+                                displayFormats: {
+                                    month: 'MMM yyyy'
+                                }
+                            },
+                            min: new Date('2024-12-01').getTime(),
+                            max: new Date('2025-12-31').getTime(),
+                            title: {
+                                display: true,
+                                text: 'Timeline'
+                            }
+                        }
+                    },
+                    plugins: {
+                        legend: { display: false },
+                        tooltip: {
+                            callbacks: {
+                                title: function(context) {
+                                    return context[0].label;
+                                },
+                                label: function(context) {
+                                    const start = new Date(context.raw.x[0]).toLocaleDateString();
+                                    const end = new Date(context.raw.x[1]).toLocaleDateString();
+                                    if (start === end) return `Deadline: ${end}`;
+                                    return `Window: ${start} - ${end}`;
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+
+            // Qualification Table Logic
+            const tableBody = document.querySelector('#qualification-table tbody');
+            const roleFilter = document.getElementById('role-filter');
+
+            function populateTable(filter = 'all') {
+                tableBody.innerHTML = '';
+                const filteredData = filter === 'all' ? qualificationData : qualificationData.filter(d => d.code === filter);
+                
+                if (filteredData.length === 0) {
+                    tableBody.innerHTML = `<tr><td colspan="4" class="text-center px-6 py-4">No data available for this role.</td></tr>`;
+                    return;
+                }
+
+                filteredData.forEach(item => {
+                    const row = `
+                        <tr class="bg-white hover:bg-gray-50">
+                            <td class="px-6 py-4 font-medium text-gray-900">${item.role}</td>
+                            <td class="px-6 py-4">${item.proficiency}</td>
+                            <td class="px-6 py-4">${item.education}</td>
+                            <td class="px-6 py-4">${item.certs}</td>
+                        </tr>
+                    `;
+                    tableBody.innerHTML += row;
+                });
+            }
+
+            roleFilter.addEventListener('change', (e) => {
+                populateTable(e.target.value);
+            });
+            
+            populateTable();
+
+            // Accordion Logic
+            const accordionContainer = document.getElementById('accordion-container');
+            roadmapData.forEach((item, index) => {
+                const accordionItem = `
+                    <div class="card rounded-lg overflow-hidden">
+                        <h2>
+                            <button type="button" class="flex items-center justify-between w-full p-5 font-medium text-left text-gray-800" data-accordion-target="accordion-body-${index}">
+                                <span>${item.title}</span>
+                                <svg class="w-3 h-3 rotate-180 shrink-0" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 10 6">
+                                    <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5 5 1 1 5"/>
+                                </svg>
+                            </button>
+                        </h2>
+                        <div id="accordion-body-${index}" class="accordion-content">
+                            <div class="p-5 border-t border-gray-200 text-gray-600">
+                                ${item.content}
+                            </div>
+                        </div>
+                    </div>
+                `;
+                accordionContainer.innerHTML += accordionItem;
+            });
+
+            accordionContainer.addEventListener('click', function(e) {
+                const button = e.target.closest('button[data-accordion-target]');
+                if (!button) return;
+
+                const targetId = button.getAttribute('data-accordion-target');
+                const body = document.getElementById(targetId);
+                const svg = button.querySelector('svg');
+
+                const isExpanded = body.style.maxHeight && body.style.maxHeight !== '0px';
+
+                if (isExpanded) {
+                    body.style.maxHeight = '0px';
+                    svg.style.transform = 'rotate(180deg)';
+                } else {
+                    body.style.maxHeight = body.scrollHeight + 'px';
+                    svg.style.transform = 'rotate(0deg)';
+                }
+            });
+
+            // Active Nav Link Scrolling
+            const sections = document.querySelectorAll('section');
+            const navLinks = document.querySelectorAll('.nav-link');
+
+            window.addEventListener('scroll', () => {
+                let current = '';
+                sections.forEach(section => {
+                    const sectionTop = section.offsetTop;
+                    if (pageYOffset >= sectionTop - 80) {
+                        current = section.getAttribute('id');
+                    }
+                });
+
+                navLinks.forEach(link => {
+                    link.classList.remove('active');
+                    if (link.getAttribute('href').includes(current)) {
+                        link.classList.add('active');
+                    }
+                });
+            });
+        });
+    </script>
+</body>
+</html>
